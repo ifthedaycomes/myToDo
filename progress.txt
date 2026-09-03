@@ -1,0 +1,57 @@
+myToDo — Ralph 세션 완료 기록
+================================
+
+무엇을 만들었나
+- Next.js 14(App Router) + TypeScript + Tailwind + Prisma(SQLite) 기반 개인용 할일/주간계획/1년목표 관리 앱
+- 데이터: Goal, WeeklyPlan(+WeeklyGoal 체크리스트), Todo (todo/doing/done, priority, dueDate, order fractional index)
+- 페이지: / (대시보드), /goals, /weekly, /weekly/[id], /todos (칸반보드, dnd-kit 드래그앤드랍)
+- API: /api/goals, /api/goals/[id], /api/weekly, /api/weekly/[id], /api/todos, /api/todos/[id] (CRUD + PATCH)
+- 진행률: WeeklyPlan = 연결된 Todo의 done 비율, Goal = 연결된 WeeklyPlan 진행률 평균 (src/lib/progress.ts)
+
+원래 계획(docs/PRD.md, docs/PLAN.md) 대비 변경한 부분 (evidence-preserving amendment, prd.json 참고)
+- MongoDB Atlas + NextAuth + Vercel 배포 → Prisma+SQLite(로컬 파일 DB) + 인증 없음(개인 단일 사용자) + 로컬 실행만 지원
+- 이유: 이 머신에 MongoDB/Docker 미설치, Atlas/Vercel 자격 증명 없음. PRD 자체는 특정 기술 스택을 명시하지 않았고, 스택 결정은 PLAN.md에서만 나온 것이라 기능 손실 없이 대체 가능.
+
+실행 방법
+1. cd /Users/kimilyun/myToDo
+2. npm run dev
+3. http://localhost:3000 접속
+
+검증 내역
+- npm run build, npm run lint 모두 0 에러
+- 모든 API 엔드포인트 curl로 CRUD/400/404/409/PATCH 동작 확인, 진행률 계산 정확성(50%, 100%) 확인
+- architect 리뷰어 APPROVED (prd.json의 7개 스토리 acceptance criteria 전수 검증)
+- ai-slop-cleaner 표준 모드 실행: todoStore.ts가 fractional-indexing을 직접 호출하던 중복을 lib/fractionalIndex.ts의 orderKeyBetween 재사용으로 통합, dead code(미사용 wrapper) 제거
+- 디슬롭 후 build/lint 재검증 통과, 회귀 API 스모크 테스트 통과
+
+남은 리스크 / 후속 과제 (범위 밖으로 명시)
+- 자동화 테스트 스위트 없음 (수동 curl 검증으로 대체) — 필요 시 vitest 등 추가 가능
+- 클라우드 배포(Vercel) 미수행 — 사용자가 원하면 별도로 Vercel/Atlas 계정 연결 후 진행 필요
+- 다중 사용자 인증 없음 — 개인 로컬 사용을 전제로 한 설계
+- WeeklyPlan 진행률은 "요일별 배치된 Todo 완료율" 기준이며, weeklyGoals 체크리스트(이번주 목표 문구)는 별도의 정성적 체크리스트로 분리되어 있음 (PLAN.md 원안과 다른 해석, PRD 문구 기준으로는 합리적 선택)
+
+================================
+myToDo — GitHub OAuth 로그인 추가 (docs/LOGIN.md, session bd28b162)
+================================
+
+무엇을 추가했나
+- 데이터: User(githubId, username, avatarUrl), Session(token, userId, expiresAt) 모델 추가. Todo에 필수 userId 추가 (Mongo이므로 `npx prisma db push`가 migrate 역할).
+- 인증 코어: src/lib/auth.ts (세션 쿠키 발급/조회/삭제, DB 세션 기반이라 로그아웃 시 완전 무효화), src/lib/github-oauth.ts (authorize URL/토큰 교환/유저 조회, CLIENT_SECRET은 항상 process.env로만 읽음)
+- 라우터: GET /auth/github, /auth/github/callback (state 검증 + code→token 교환 + User upsert + 세션 발급), /auth/logout (DB 세션 삭제 + 쿠키 삭제). /login 페이지 신설.
+- 페이지 보호: /, /todos, /goals, /weekly, /weekly/[id] 는 기존 "use client" 페이지를 그대로 View 컴포넌트로 옮기고, 얇은 서버 컴포넌트 page.tsx가 requireUser()로 감싸는 방식 (기존 UI/로직 변경 없음). layout.tsx는 getCurrentUser()(리다이렉트 없음)로 Sidebar에 로그인 사용자 표시.
+- API 소유권: /api/todos, /api/todos/[id]는 401 가드 + userId 스코핑 + 타인 소유 404. /api/weekly, /api/weekly/[id], /api/goals, /api/goals/[id]도 401 가드 추가 (architect 리뷰에서 최초 누락 지적받아 추가 — 원래 PRD는 Todo 소유권만 명시했지만, 이 라우트들이 인증 없이도 Todo 레코드를 노출/변형(SetNull cascade)할 수 있어 반드시 필요했음). WeeklyPlan 상세의 embedded todos는 `where: { userId }`로 스코핑, WeeklyPlan/Goal 자체는 로그인 사용자 간 공유(PRD가 Todo 소유권만 요구).
+- 레거시 데이터: userId 없는 기존 테스트 Todo 3건은 사용자 승인 하에 JSON 백업 후 삭제.
+
+검증 내역
+- npm run build, npm run lint 0 에러 (여러 차례 재검증)
+- curl로 미인증 시 모든 API 401, 모든 보호 페이지 307→/login 확인
+- 실제 User+Session 2명을 DB에 직접 생성해 로그인 상태를 재현: 본인 Todo만 조회/생성/삭제 가능, 타인 Todo 404, WeeklyPlan 상세의 todos가 요청자 기준으로만 필터링됨, 로그아웃 시 쿠키+DB 세션 모두 삭제(재사용 시 401) 확인. 테스트 픽스처는 전부 정리 완료 (최종 DB: todo 0, goal 0, weekly 1(원래 있던 것), user 0, session 0).
+- architect(Opus) 리뷰 1차 REJECTED → /api/weekly, /api/goals 전체 무인증 노출 지적 → 수정 → 2차 APPROVED
+- ai-slop-cleaner 표준 모드: 코드 자체는 깔끔했고(디버그 로그/TODO/죽은 import 없음), Todo가 항상 userId로 스코핑되며 무의미해진 구 인덱스 `@@index([status, order])` 하나만 제거 (`@@index([userId, status, order])`가 상위 호환)
+- 디슬롭 후 build/lint/curl 회귀 재검증 통과
+
+실제로 검증하지 못한 것 (한계)
+- 브라우저에서 실제 GitHub 계정으로 "GitHub로 로그인" 버튼을 눌러 완주하는 E2E는 미수행 (헤드리스 환경 제약). state 검증/에러 리다이렉트 경로, 토큰 교환·유저 upsert 로직은 코드 리뷰 + DB에 세션을 직접 심어 하위 동작을 검증하는 방식으로 대체.
+
+후속 과제 (범위 밖, architect 지적)
+- weeklyPlanProgress/goalProgress(src/lib/progress.ts)가 공유 WeeklyPlan/Goal에 대해 전체 사용자의 Todo를 합산해 진행률을 계산함 — Todo가 사용자별로 분리된 지금은 "todos 배열은 내 것만 보이는데 progress %는 전체 기준"인 불일치가 생길 수 있음. PRD가 Todo 소유권만 요구했고 WeeklyPlan/Goal은 의도적으로 공유이므로 blocking은 아니지만, 필요 시 progress 계산에도 userId를 넣는 후속 작업 권장.
