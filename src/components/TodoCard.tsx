@@ -31,14 +31,14 @@ export function TodoCard({
       {...attributes}
       {...listeners}
       onClick={onClick}
-      className="rounded-md border border-black/10 dark:border-white/10 bg-white dark:bg-neutral-900 p-2.5 text-sm cursor-grab active:cursor-grabbing shadow-sm"
+      className="card cursor-grab p-3 text-sm active:cursor-grabbing"
     >
       <div className="flex items-start justify-between gap-2">
         <span className="font-medium">{todo.title}</span>
         <PriorityBadge priority={todo.priority} />
       </div>
       {todo.dueDate && (
-        <p className={`text-xs mt-1 ${overdue ? "text-red-500" : "text-neutral-500"}`}>
+        <p className={`mt-1.5 text-xs ${overdue ? "text-red-500" : "text-muted"}`}>
           마감 {formatDate(todo.dueDate)}
         </p>
       )}

@@ -1,26 +1,109 @@
 @import "tailwindcss";
 
+/* Design tokens adapted from docs/DESIGN-airbnb.md (Rausch #ff385c on white canvas). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f7f7;
+  --surface: #ffffff;
+  --surface-strong: #f2f2f2;
+  --foreground: #222222;
+  --body-text: #3f3f3f;
+  --muted: #6a6a6a;
+  --muted-soft: #929292;
+  --border: #dddddd;
+  --border-soft: #ebebeb;
+
+  --primary: #ff385c;
+  --primary-hover: #e00b41;
+  --primary-foreground: #ffffff;
+  --primary-soft: rgba(255, 56, 92, 0.08);
+
+  --shadow-elevated: 0 0 0 1px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.04),
+    0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-body-text: var(--body-text);
+  --color-muted: var(--muted);
+  --color-muted-soft: var(--muted-soft);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --font-sans: var(--font-inter);
+
+  /* Airbnb radius scale: sm=buttons/inputs(8px), xl=cards(14px), 2xl/3xl=larger surfaces. */
+  --radius-lg: 8px;
+  --radius-xl: 14px;
+  --radius-2xl: 20px;
+  --radius-3xl: 32px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f0f0f;
+    --surface: #1c1c1c;
+    --surface-strong: #292929;
+    --foreground: #f2f2f2;
+    --body-text: #d4d4d4;
+    --muted: #a8a8a8;
+    --muted-soft: #7a7a7a;
+    --border: rgba(255, 255, 255, 0.14);
+    --border-soft: rgba(255, 255, 255, 0.08);
+
+    --primary: #ff385c;
+    --primary-hover: #ff6b82;
+    --primary-foreground: #ffffff;
+    --primary-soft: rgba(255, 56, 92, 0.16);
+
+    --shadow-elevated: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 2px 6px rgba(0, 0, 0, 0.3),
+      0 4px 12px rgba(0, 0, 0, 0.4);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), "Apple SD Gothic Neo", "Malgun Gothic", ui-sans-serif,
+    system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary-hover;
+  }
+  .btn-secondary {
+    @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 border border-foreground/80 bg-transparent text-foreground hover:bg-black/[.04] dark:border-white/70 dark:hover:bg-white/[.08];
+  }
+  .btn-danger {
+    @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900/40 dark:text-red-400 dark:hover:bg-red-950/30;
+  }
+  .link-muted {
+    @apply text-muted transition-colors hover:text-foreground;
+  }
+  .card {
+    @apply rounded-xl border border-border bg-surface transition-shadow duration-150;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-elevated);
+  }
+  .popover {
+    @apply rounded-xl border border-border bg-surface;
+    box-shadow: var(--shadow-elevated);
+  }
+  .field {
+    @apply w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground transition-colors placeholder:text-muted-soft focus:border-foreground focus:outline-none disabled:opacity-50;
+    box-shadow: none;
+  }
+  .field:focus {
+    box-shadow: inset 0 0 0 1px var(--foreground);
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+  }
 }

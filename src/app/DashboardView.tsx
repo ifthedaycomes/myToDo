@@ -54,33 +54,30 @@ export function DashboardView() {
   }, []);
 
   if (loading) {
-    return <p className="text-sm text-neutral-500">불러오는 중...</p>;
+    return <p className="text-sm text-muted">불러오는 중...</p>;
   }
 
   const statusCounts: Record<TodoStatus, number> = { todo: 0, doing: 0, done: 0 };
   todos.forEach((t) => statusCounts[t.status]++);
 
   return (
-    <div className="flex flex-col gap-8">
-      <h1 className="text-xl font-semibold">대시보드</h1>
+    <div className="flex flex-col gap-10">
+      <h1 className="text-xl font-semibold tracking-tight">대시보드</h1>
 
       <section>
-        <h2 className="text-sm font-medium mb-2">할 일 현황</h2>
+        <h2 className="mb-3 text-sm font-semibold">할 일 현황</h2>
         <div className="grid grid-cols-3 gap-3">
           {(Object.keys(STATUS_LABELS) as TodoStatus[]).map((status) => (
-            <div
-              key={status}
-              className="rounded-lg border border-black/10 dark:border-white/10 p-4 text-center"
-            >
-              <div className="text-2xl font-semibold">{statusCounts[status]}</div>
-              <div className="text-xs text-neutral-500 mt-1">{STATUS_LABELS[status]}</div>
+            <div key={status} className="card p-4 text-center">
+              <div className="text-2xl font-semibold text-primary">{statusCounts[status]}</div>
+              <div className="mt-1 text-xs text-muted">{STATUS_LABELS[status]}</div>
             </div>
           ))}
         </div>
         {todos.length === 0 && (
-          <p className="text-sm text-neutral-500 mt-2">
+          <p className="mt-2 text-sm text-muted">
             등록된 할 일이 없습니다.{" "}
-            <Link href="/todos" className="underline">
+            <Link href="/todos" className="text-primary underline underline-offset-2">
               할 일 추가하기
             </Link>
           </p>
@@ -88,32 +85,29 @@ export function DashboardView() {
       </section>
 
       <section>
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-medium">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">
             {plan
               ? isCurrentWeek
                 ? "이번 주 계획"
                 : `최근 주간 계획 (${formatDate(plan.weekStart)} 주)`
               : "주간 계획"}
           </h2>
-          {plan && <span className="text-xs text-neutral-500">{plan.progress}%</span>}
+          {plan && <span className="badge bg-primary-soft text-primary">{plan.progress}%</span>}
         </div>
         {!plan ? (
-          <div className="rounded-lg border border-dashed border-black/20 dark:border-white/20 p-6 text-center">
-            <p className="text-sm text-neutral-500 mb-3">아직 주간 계획이 없습니다.</p>
-            <Link
-              href="/weekly"
-              className="inline-block rounded-md bg-black text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm"
-            >
+          <div className="rounded-xl border border-dashed border-border p-6 text-center">
+            <p className="mb-3 text-sm text-muted">아직 주간 계획이 없습니다.</p>
+            <Link href="/weekly" className="btn-primary inline-flex">
               주간 계획 만들기
             </Link>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="card flex flex-col gap-3 p-4">
             {!isCurrentWeek && (
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-muted">
                 이번 주 계획이 아직 없습니다.{" "}
-                <Link href="/weekly" className="underline">
+                <Link href="/weekly" className="text-primary underline underline-offset-2">
                   새로 만들기
                 </Link>
               </p>
@@ -121,21 +115,18 @@ export function DashboardView() {
             <ProgressBar value={plan.progress} />
             <ul className="flex flex-col gap-1">
               {plan.weeklyGoals.map((g) => (
-                <li key={g.id} className="text-sm flex items-center gap-2">
+                <li key={g.id} className="flex items-center gap-2 text-sm">
                   <span>{g.done ? "✅" : "⬜️"}</span>
-                  <span className={g.done ? "line-through text-neutral-400" : ""}>
+                  <span className={g.done ? "text-neutral-400 line-through" : ""}>
                     {g.text}
                   </span>
                 </li>
               ))}
               {plan.weeklyGoals.length === 0 && (
-                <li className="text-sm text-neutral-500">설정된 목표가 없습니다.</li>
+                <li className="text-sm text-muted">설정된 목표가 없습니다.</li>
               )}
             </ul>
-            <Link
-              href={`/weekly/${plan.id}`}
-              className="inline-block text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
-            >
+            <Link href={`/weekly/${plan.id}`} className="link-muted inline-block text-xs">
               주간 계획 상세보기 →
             </Link>
           </div>
@@ -143,21 +134,21 @@ export function DashboardView() {
       </section>
 
       <section>
-        <h2 className="text-sm font-medium mb-2">1년 목표</h2>
+        <h2 className="mb-3 text-sm font-semibold">1년 목표</h2>
         {goals.length === 0 ? (
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-muted">
             등록된 목표가 없습니다.{" "}
-            <Link href="/goals" className="underline">
+            <Link href="/goals" className="text-primary underline underline-offset-2">
               목표 추가하기
             </Link>
           </p>
         ) : (
           <ul className="flex flex-col gap-3">
             {goals.map((goal) => (
-              <li key={goal.id}>
-                <div className="flex items-center justify-between text-sm mb-1">
-                  <span>{goal.title}</span>
-                  <span className="text-neutral-500">{goal.progress}%</span>
+              <li key={goal.id} className="card p-4">
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="font-medium">{goal.title}</span>
+                  <span className="text-muted">{goal.progress}%</span>
                 </div>
                 <ProgressBar value={goal.progress} />
               </li>

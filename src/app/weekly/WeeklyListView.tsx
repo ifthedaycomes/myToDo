@@ -92,45 +92,36 @@ export function WeeklyListView() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold">주간 계획</h1>
-        <button
-          onClick={openCreate}
-          className="rounded-md bg-black text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm"
-        >
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-xl font-semibold tracking-tight">주간 계획</h1>
+        <button onClick={openCreate} className="btn-primary">
           + 새 주간 계획
         </button>
       </div>
 
       {loading ? (
-        <p className="text-sm text-neutral-500">불러오는 중...</p>
+        <p className="text-sm text-muted">불러오는 중...</p>
       ) : plans.length === 0 ? (
-        <p className="text-sm text-neutral-500">아직 주간 계획이 없습니다.</p>
+        <p className="text-sm text-muted">아직 주간 계획이 없습니다.</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {plans.map((plan) => (
-            <li
-              key={plan.id}
-              className="rounded-lg border border-black/10 dark:border-white/10 p-4 hover:bg-black/[.02] dark:hover:bg-white/[.04]"
-            >
+            <li key={plan.id} className="card p-4">
               <div className="flex items-start justify-between gap-2">
-                <Link href={`/weekly/${plan.id}`} className="flex-1 block min-w-0">
+                <Link href={`/weekly/${plan.id}`} className="block min-w-0 flex-1">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{formatDate(plan.weekStart)} 주</span>
-                    <span className="text-xs text-neutral-500">{plan.progress}%</span>
+                    <span className="badge bg-primary-soft text-primary">{plan.progress}%</span>
                   </div>
                   {plan.memo && (
-                    <p className="text-sm text-neutral-500 mt-1 line-clamp-1">{plan.memo}</p>
+                    <p className="mt-1 line-clamp-1 text-sm text-muted">{plan.memo}</p>
                   )}
                   <div className="mt-2">
                     <ProgressBar value={plan.progress} />
                   </div>
                 </Link>
-                <div className="flex gap-2 text-xs shrink-0">
-                  <button
-                    onClick={() => openEdit(plan)}
-                    className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
-                  >
+                <div className="flex shrink-0 gap-3 text-xs">
+                  <button onClick={() => openEdit(plan)} className="link-muted">
                     수정
                   </button>
                   <button
@@ -153,21 +144,21 @@ export function WeeklyListView() {
       >
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           {error && <p className="text-sm text-red-500">{error}</p>}
-          <label className="text-sm flex flex-col gap-1">
+          <label className="flex flex-col gap-1 text-sm">
             주 시작일
             <input
               type="date"
               value={weekStart}
               onChange={(e) => setWeekStart(e.target.value)}
-              className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+              className="field"
             />
           </label>
-          <label className="text-sm flex flex-col gap-1">
+          <label className="flex flex-col gap-1 text-sm">
             연결할 1년 목표 (선택)
             <select
               value={goalId}
               onChange={(e) => setGoalId(e.target.value)}
-              className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+              className="field"
             >
               <option value="">없음</option>
               {goals.map((g) => (
@@ -189,32 +180,29 @@ export function WeeklyListView() {
                   next[i] = e.target.value;
                   setGoalTexts(next);
                 }}
-                className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+                className="field"
               />
             ))}
             {goalTexts.length < 5 && (
               <button
                 type="button"
                 onClick={() => setGoalTexts([...goalTexts, ""])}
-                className="text-xs text-neutral-500 self-start"
+                className="self-start text-xs text-primary"
               >
                 + 목표 추가
               </button>
             )}
           </div>
-          <label className="text-sm flex flex-col gap-1">
+          <label className="flex flex-col gap-1 text-sm">
             메모
             <textarea
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
               rows={3}
-              className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+              className="field"
             />
           </label>
-          <button
-            type="submit"
-            className="rounded-md bg-black text-white dark:bg-white dark:text-black px-3 py-2 text-sm"
-          >
+          <button type="submit" className="btn-primary">
             저장
           </button>
         </form>

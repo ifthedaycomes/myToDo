@@ -70,14 +70,14 @@ export function DatePicker({
       <button
         type="button"
         onClick={() => (open ? setOpen(false) : openPopup())}
-        className="w-full rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm text-left"
+        className="field text-left"
       >
         {value || <span className="text-neutral-400">{placeholder}</span>}
       </button>
 
       {open && (
-        <div className="absolute z-10 mt-1 w-64 rounded-md border border-black/10 dark:border-white/20 bg-white dark:bg-neutral-900 p-3 shadow-lg">
-          <div className="flex items-center justify-between gap-1 mb-2">
+        <div className="popover absolute z-10 mt-1 w-64 p-3">
+          <div className="mb-2 flex items-center justify-between gap-1">
             <button
               type="button"
               onClick={() =>
@@ -89,7 +89,7 @@ export function DatePicker({
                   return m - 1;
                 })
               }
-              className="px-1.5 py-0.5 text-sm text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
+              className="link-muted rounded px-1.5 py-0.5 text-sm"
             >
               ‹
             </button>
@@ -97,7 +97,7 @@ export function DatePicker({
               <select
                 value={viewYear}
                 onChange={(e) => setViewYear(Number(e.target.value))}
-                className="rounded border border-black/10 dark:border-white/20 bg-transparent text-sm px-1 py-0.5"
+                className="rounded-md border border-border bg-transparent px-1 py-0.5 text-sm"
               >
                 {yearOptions.map((y) => (
                   <option key={y} value={y}>
@@ -108,7 +108,7 @@ export function DatePicker({
               <select
                 value={viewMonth}
                 onChange={(e) => setViewMonth(Number(e.target.value))}
-                className="rounded border border-black/10 dark:border-white/20 bg-transparent text-sm px-1 py-0.5"
+                className="rounded-md border border-border bg-transparent px-1 py-0.5 text-sm"
               >
                 {Array.from({ length: 12 }, (_, i) => i).map((m) => (
                   <option key={m} value={m}>
@@ -128,13 +128,13 @@ export function DatePicker({
                   return m + 1;
                 })
               }
-              className="px-1.5 py-0.5 text-sm text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
+              className="link-muted rounded px-1.5 py-0.5 text-sm"
             >
               ›
             </button>
           </div>
 
-          <div className="grid grid-cols-7 gap-1 text-center text-xs text-neutral-400 mb-1">
+          <div className="mb-1 grid grid-cols-7 gap-1 text-center text-xs text-neutral-400">
             {WEEKDAY_LABELS.map((label) => (
               <span key={label}>{label}</span>
             ))}
@@ -153,12 +153,12 @@ export function DatePicker({
                   type="button"
                   disabled={day === null}
                   onClick={() => day !== null && pick(day)}
-                  className={`rounded py-1 ${
+                  className={`rounded-md py-1 transition-colors ${
                     day === null
                       ? ""
                       : isSelected
-                        ? "bg-black text-white dark:bg-white dark:text-black"
-                        : "hover:bg-black/5 dark:hover:bg-white/10"
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-black/[.04] dark:hover:bg-white/[.08]"
                   }`}
                 >
                   {day ?? ""}
@@ -167,7 +167,7 @@ export function DatePicker({
             })}
           </div>
 
-          <div className="flex justify-between mt-2 pt-2 border-t border-black/10 dark:border-white/10">
+          <div className="mt-2 flex justify-between border-t border-border pt-2">
             <button
               type="button"
               onClick={() => {
@@ -175,7 +175,7 @@ export function DatePicker({
                 onChange(toDateString(today.getFullYear(), today.getMonth(), today.getDate()));
                 setOpen(false);
               }}
-              className="text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
+              className="link-muted text-xs"
             >
               오늘
             </button>

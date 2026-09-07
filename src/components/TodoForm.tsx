@@ -87,20 +87,20 @@ export function TodoForm({
         placeholder="제목"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+        className="field"
       />
       <textarea
         placeholder="설명 (선택)"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         rows={2}
-        className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+        className="field"
       />
       <div className="flex gap-2">
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value as TodoPriority)}
-          className="flex-1 rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+          className="field flex-1"
         >
           <option value="high">높음</option>
           <option value="medium">보통</option>
@@ -110,12 +110,12 @@ export function TodoForm({
       </div>
 
       <div className="flex gap-2">
-        <label className="flex-1 text-sm flex flex-col gap-1">
+        <label className="flex flex-1 flex-col gap-1 text-sm">
           연결할 주간 계획 (선택)
           <select
             value={weeklyPlanId}
             onChange={(e) => handlePlanChange(e.target.value)}
-            className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+            className="field"
           >
             <option value="">없음</option>
             {plans.map((plan) => (
@@ -125,13 +125,13 @@ export function TodoForm({
             ))}
           </select>
         </label>
-        <label className="flex-1 text-sm flex flex-col gap-1">
+        <label className="flex flex-1 flex-col gap-1 text-sm">
           요일
           <select
             value={dayOfWeek}
             onChange={(e) => setDayOfWeek(e.target.value)}
             disabled={!weeklyPlanId}
-            className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm disabled:opacity-50"
+            className="field"
           >
             <option value="">지정 안함</option>
             {DAY_LABELS.map((label, i) => (
@@ -144,7 +144,7 @@ export function TodoForm({
       </div>
 
       {planDetail && (
-        <div className="rounded-md border border-black/10 dark:border-white/10 p-2 text-xs text-neutral-500 flex flex-col gap-1">
+        <div className="card flex flex-col gap-1 p-2.5 text-xs text-muted">
           <span className="font-medium text-neutral-600 dark:text-neutral-300">
             {formatDate(planDetail.weekStart)} 주에 등록된 항목
           </span>
@@ -170,19 +170,12 @@ export function TodoForm({
         </div>
       )}
 
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          className="flex-1 rounded-md bg-black text-white dark:bg-white dark:text-black px-3 py-2 text-sm"
-        >
+      <div className="flex gap-2 pt-1">
+        <button type="submit" className="btn-primary flex-1">
           저장
         </button>
         {onDelete && (
-          <button
-            type="button"
-            onClick={onDelete}
-            className="rounded-md border border-red-300 text-red-500 px-3 py-2 text-sm"
-          >
+          <button type="button" onClick={onDelete} className="btn-danger">
             삭제
           </button>
         )}

@@ -16,8 +16,13 @@ export function Sidebar({ user }: { user: SessionUser | null }) {
   const pathname = usePathname();
 
   return (
-    <nav className="w-52 shrink-0 border-r border-black/10 dark:border-white/10 p-4 min-h-screen flex flex-col">
-      <div className="text-lg font-semibold mb-6 px-2">myToDo</div>
+    <nav className="flex min-h-screen w-56 shrink-0 flex-col border-r border-border bg-surface p-4">
+      <div className="mb-6 flex items-center gap-2 px-2">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">
+          T
+        </span>
+        <span className="text-lg font-semibold tracking-tight">myToDo</span>
+      </div>
       <ul className="flex flex-col gap-1">
         {NAV_ITEMS.map((item) => {
           const active =
@@ -26,10 +31,10 @@ export function Sidebar({ user }: { user: SessionUser | null }) {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`block rounded-md px-3 py-2 text-sm transition-colors ${
+                className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   active
-                    ? "bg-black text-white dark:bg-white dark:text-black"
-                    : "hover:bg-black/5 dark:hover:bg-white/10"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-body-text hover:bg-black/[.04] dark:hover:bg-white/[.06]"
                 }`}
               >
                 {item.label}
@@ -39,7 +44,7 @@ export function Sidebar({ user }: { user: SessionUser | null }) {
         })}
       </ul>
 
-      <div className="mt-auto pt-4 border-t border-black/10 dark:border-white/10">
+      <div className="mt-auto border-t border-border pt-4">
         {user ? (
           <div className="flex items-center gap-2 px-2">
             {user.avatarUrl && (
@@ -48,23 +53,17 @@ export function Sidebar({ user }: { user: SessionUser | null }) {
                 alt={user.username}
                 width={28}
                 height={28}
-                className="rounded-full"
+                className="rounded-full ring-1 ring-border"
                 unoptimized
               />
             )}
-            <span className="text-sm truncate flex-1">{user.username}</span>
-            <a
-              href="/auth/logout"
-              className="text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 shrink-0"
-            >
+            <span className="flex-1 truncate text-sm">{user.username}</span>
+            <a href="/auth/logout" className="link-muted shrink-0 text-xs">
               로그아웃
             </a>
           </div>
         ) : (
-          <a
-            href="/login"
-            className="block px-2 py-2 text-sm text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
-          >
+          <a href="/login" className="link-muted block px-2 py-2 text-sm">
             로그인
           </a>
         )}

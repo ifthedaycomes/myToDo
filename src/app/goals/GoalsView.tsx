@@ -68,34 +68,25 @@ export function GoalsView() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold">1년 목표</h1>
-        <button
-          onClick={openCreate}
-          className="rounded-md bg-black text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm"
-        >
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-xl font-semibold tracking-tight">1년 목표</h1>
+        <button onClick={openCreate} className="btn-primary">
           + 새 목표
         </button>
       </div>
 
       {loading ? (
-        <p className="text-sm text-neutral-500">불러오는 중...</p>
+        <p className="text-sm text-muted">불러오는 중...</p>
       ) : goals.length === 0 ? (
-        <p className="text-sm text-neutral-500">아직 목표가 없습니다. 새 목표를 추가해보세요.</p>
+        <p className="text-sm text-muted">아직 목표가 없습니다. 새 목표를 추가해보세요.</p>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2">
           {goals.map((goal) => (
-            <li
-              key={goal.id}
-              className="rounded-lg border border-black/10 dark:border-white/10 p-4"
-            >
+            <li key={goal.id} className="card p-4">
               <div className="flex items-start justify-between gap-2">
                 <h3 className="font-medium">{goal.title}</h3>
-                <div className="flex gap-2 text-xs shrink-0">
-                  <button
-                    onClick={() => openEdit(goal)}
-                    className="text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
-                  >
+                <div className="flex shrink-0 gap-3 text-xs">
+                  <button onClick={() => openEdit(goal)} className="link-muted">
                     수정
                   </button>
                   <button
@@ -107,10 +98,10 @@ export function GoalsView() {
                 </div>
               </div>
               {goal.description && (
-                <p className="text-sm text-neutral-500 mt-1">{goal.description}</p>
+                <p className="mt-1 text-sm text-muted">{goal.description}</p>
               )}
               <div className="mt-3">
-                <div className="flex items-center justify-between text-xs text-neutral-500 mb-1">
+                <div className="mb-1 flex items-center justify-between text-xs text-muted">
                   <span>진행률</span>
                   <span>{goal.progress}%</span>
                 </div>
@@ -133,19 +124,16 @@ export function GoalsView() {
             placeholder="제목"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+            className="field"
           />
           <textarea
             placeholder="설명 (선택)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+            className="field"
           />
-          <button
-            type="submit"
-            className="rounded-md bg-black text-white dark:bg-white dark:text-black px-3 py-2 text-sm"
-          >
+          <button type="submit" className="btn-primary">
             저장
           </button>
         </form>

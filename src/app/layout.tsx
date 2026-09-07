@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Sidebar } from "@/components/Sidebar";
 import { getCurrentUser } from "@/lib/auth";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -23,13 +19,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const user = await getCurrentUser();
 
   return (
-    <html
-      lang="ko"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex">
+    <html lang="ko" className={`${inter.variable} h-full antialiased`}>
+      <body className="flex min-h-full bg-background text-foreground">
         <Sidebar user={user} />
-        <main className="flex-1 p-4 sm:p-8 max-w-5xl mx-auto w-full">{children}</main>
+        <main className="w-full flex-1 p-4 sm:p-10">
+          <div className="mx-auto w-full max-w-5xl">{children}</div>
+        </main>
       </body>
     </html>
   );

@@ -100,17 +100,14 @@ export function KanbanBoard() {
   }
 
   if (loading) {
-    return <p className="text-sm text-neutral-500">불러오는 중...</p>;
+    return <p className="text-sm text-muted">불러오는 중...</p>;
   }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-semibold">할 일</h1>
-        <button
-          onClick={() => setModalTodo("new")}
-          className="rounded-md bg-black text-white dark:bg-white dark:text-black px-3 py-1.5 text-sm"
-        >
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-xl font-semibold tracking-tight">할 일</h1>
+        <button onClick={() => setModalTodo("new")} className="btn-primary">
           + 새 할 일
         </button>
       </div>
@@ -120,7 +117,7 @@ export function KanbanBoard() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-4">
+        <div className="flex gap-5">
           {STATUSES.map((status) => (
             <KanbanColumn
               key={status}

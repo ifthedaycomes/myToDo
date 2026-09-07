@@ -75,31 +75,28 @@ export function WeeklyDetailView({ id }: { id: string }) {
   }
 
   if (!plan) {
-    return <p className="text-sm text-neutral-500">불러오는 중...</p>;
+    return <p className="text-sm text-muted">불러오는 중...</p>;
   }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
-        <h1 className="text-xl font-semibold">{formatDate(plan.weekStart)} 주</h1>
-        <button
-          onClick={handleDelete}
-          className="text-xs text-red-500 hover:text-red-700"
-        >
+      <div className="mb-1 flex items-center justify-between">
+        <h1 className="text-xl font-semibold tracking-tight">{formatDate(plan.weekStart)} 주</h1>
+        <button onClick={handleDelete} className="text-xs text-red-500 hover:text-red-700">
           삭제
         </button>
       </div>
-      <div className="flex items-center gap-2 mb-6">
+      <div className="mb-8 flex items-center gap-2">
         <div className="flex-1">
           <ProgressBar value={plan.progress} />
         </div>
-        <span className="text-xs text-neutral-500 shrink-0">
+        <span className="badge shrink-0 bg-primary-soft text-primary">
           진행률 {plan.progress}%
         </span>
       </div>
 
       <section className="mb-8">
-        <h2 className="text-sm font-medium mb-2">이번 주 목표</h2>
+        <h2 className="mb-2 text-sm font-semibold">이번 주 목표</h2>
         <ul className="flex flex-col gap-1">
           {plan.weeklyGoals.map((g) => (
             <li key={g.id} className="flex items-center gap-2 text-sm">
@@ -107,33 +104,31 @@ export function WeeklyDetailView({ id }: { id: string }) {
                 type="checkbox"
                 checked={g.done}
                 onChange={(e) => toggleGoal(g.id, e.target.checked)}
+                className="accent-[var(--primary)]"
               />
-              <span className={g.done ? "line-through text-neutral-400" : ""}>
+              <span className={g.done ? "text-neutral-400 line-through" : ""}>
                 {g.text}
               </span>
             </li>
           ))}
           {plan.weeklyGoals.length === 0 && (
-            <li className="text-sm text-neutral-500">설정된 목표가 없습니다.</li>
+            <li className="text-sm text-muted">설정된 목표가 없습니다.</li>
           )}
         </ul>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-sm font-medium mb-2">요일별 할 일</h2>
+        <h2 className="mb-2 text-sm font-semibold">요일별 할 일</h2>
         <div className="grid grid-cols-7 gap-2">
           {DAY_LABELS.map((label, day) => {
             const dayTodos = plan.todos.filter((t) => t.dayOfWeek === day);
             return (
-              <div
-                key={day}
-                className="rounded-md border border-black/10 dark:border-white/10 p-2 min-h-32 flex flex-col gap-1"
-              >
-                <div className="text-xs font-medium text-neutral-500 mb-1">{label}</div>
+              <div key={day} className="card flex min-h-32 flex-col gap-1 p-2">
+                <div className="mb-1 text-xs font-medium text-muted">{label}</div>
                 {dayTodos.map((t) => (
                   <div
                     key={t.id}
-                    className="text-xs rounded bg-black/5 dark:bg-white/10 px-2 py-1"
+                    className="rounded-md bg-primary-soft px-2 py-1 text-xs text-primary"
                   >
                     {t.title}
                   </div>
@@ -151,13 +146,13 @@ export function WeeklyDetailView({ id }: { id: string }) {
                       value={newTodoTitle}
                       onChange={(e) => setNewTodoTitle(e.target.value)}
                       onBlur={() => !newTodoTitle && setNewTodoDay(null)}
-                      className="text-xs rounded border border-black/10 dark:border-white/20 bg-transparent px-1 py-0.5"
+                      className="rounded-md border border-border bg-transparent px-1 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
                   </form>
                 ) : (
                   <button
                     onClick={() => setNewTodoDay(day)}
-                    className="text-xs text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 text-left mt-auto"
+                    className="mt-auto text-left text-xs text-neutral-400 hover:text-primary dark:hover:text-primary"
                   >
                     + 할일
                   </button>
@@ -169,14 +164,14 @@ export function WeeklyDetailView({ id }: { id: string }) {
       </section>
 
       <section>
-        <h2 className="text-sm font-medium mb-2">주간 회고</h2>
+        <h2 className="mb-2 text-sm font-semibold">주간 회고</h2>
         <textarea
           value={retrospective}
           onChange={(e) => setRetrospective(e.target.value)}
           onBlur={saveRetrospective}
           rows={4}
           placeholder="이번 주는 어땠나요?"
-          className="w-full rounded-md border border-black/10 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+          className="field"
         />
       </section>
     </div>
